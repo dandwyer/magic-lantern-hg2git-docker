@@ -1,3 +1,5 @@
+## Overview
+
 This repo uses Docker to convert the official
 [Magic Lantern](https://www.magiclantern.fm)
 [Mercurial repository](https://foss.heptapod.net/magic-lantern/magic-lantern/)
@@ -6,6 +8,19 @@ that spawned it. This is advantageous as forum messages and/or broken URL links
 often refer to Mercurial changesets that are otherwise untraceable after
 migration to git. This has mostly affected me as I have a Canon 7D and have had
 difficulty figuring out the commit(s) where it was last supported.
+
+## Running
+For reference, this package was initially developed with:
+```
+$ hostnamectl | grep System
+Operating System: Ubuntu 24.04.1 LTS
+```
+
+After cloning:
+1. Run `./build.sh`
+2. A converted git repository should appear in the `magic-lantern` directory
+
+## Additional Information
 
 I knowingly created this fork of other available options due to the following
 perceived issues:
