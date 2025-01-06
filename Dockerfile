@@ -33,9 +33,35 @@ RUN ../fast-export/hg-fast-export.sh \
 
 RUN git checkout unified
 
-FROM hg2git AS finalized_repo
+# Capture all of the more recent development activity, but rebase it onto
+# commits that reference Mercurial changesets.
+FROM hg2git AS rebase_simplified
 
-# Reduce the size of the .git directory from 320 MB to 40 MB
+RUN apt-get update \
+    && apt-get install -y \
+    git-filter-repo \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git remote add simplified \
+    https://github.com/reticulatedpines/magiclantern_simplified.git
+RUN git fetch simplified dev
+RUN git checkout -b main --track simplified/dev
+
+# The `dev` branch connects to the commits in the original Mercurial repository via
+# two merge commits. We navigate to these commits and swap from the parents without
+# Mercurial changeset attribution to the parents with Mercurial changeset attribution.
+RUN git merge-base --is-ancestor \
+    b51cae028018f8754b107fc30a7adf5c1cbd8b9d \
+    ee9a94ae583b23764c389e9245e8813d61485683
+RUN git replace ee9a94ae583b23764c389e9245e8813d61485683 \
+    $(git log --grep="1939f0c3d408f51d4827d9e5515f647e7a47a0b6" --all --format="%H")
+RUN git replace b51cae028018f8754b107fc30a7adf5c1cbd8b9d \
+    $(git log --grep="d78f841fa972274522b3c9ac287e397469b152e8" --all --format="%H")
+RUN git filter-repo --force --replace-refs delete-no-add
+
+FROM rebase_simplified AS finalized_repo
+
+# Reduce the size of the .git directory from 301 MB to 43 MB
 RUN git gc --aggressive --prune=all
 
 RUN git remote add origin \

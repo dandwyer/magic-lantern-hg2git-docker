@@ -27,3 +27,7 @@ sudo chown -R "${USER}:${USER}" magic-lantern
 # Commands that are convenient for debugging and/or development
 sudo docker run ml-hg2git
 # sudo docker run -it ml-hg2git bash
+
+# Probably not a good idea to uncomment, but for reference, we can push the
+# changes to the remote repository.
+#cd magic-lantern && git push origin --all --force
